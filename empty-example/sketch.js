@@ -9,6 +9,7 @@
 // Not done
 // Lines connecting circles
 // System to overlapping cirlces
+// Try recursion
 
 function setup() {
   createCanvas(3300, 2550);
@@ -27,7 +28,7 @@ function draw() {
   let centerY = height / 2;
   let mainCircleRadius = 800;
   let n_circles = 8;
-  for(let i = 0; i < n_circles; i++) {
+  for (let i = 0; i < n_circles; i++) {
     let angle = i * (360 / n_circles);
     let x = centerX + mainCircleRadius * cos(angle);
     let y = centerY + mainCircleRadius * sin(angle);
@@ -50,28 +51,36 @@ function drawCircle(centerX, centerY, mainCircleRadius) {
   circle(centerX, centerY, mainCircleRadius);
 
   // Roll dice to cut out circle
-    cutCircleAngle = random(0, 360);
-    cutCircleRadius = random(mainCircleRadius / 2 * .2,.8* mainCircleRadius / 2);
-    cutCircleDistance = random(mainCircleRadius - cutCircleRadius, (mainCircleRadius) * .5);
-  if (rollDice(0.5)) {
+  cutCircleAngle = random(0, 360);
+  cutCircleRadius = random(mainCircleRadius / 2 * .2, .8 * mainCircleRadius / 2);
+  cutCircleDistance = random(mainCircleRadius - cutCircleRadius, (mainCircleRadius) * .5);
+  hasWhiteCircle = rollDice(0.5);
+  if (hasWhiteCircle) {
     whiteCircle(centerX, centerY, cutCircleAngle, cutCircleDistance, mainCircleRadius);
   }
+
 
   // Draw a random circle on the outside of the main circle
   circleRadius = random(.2, .5) * mainCircleRadius;
   circleAngle = random(0, 360);
 
   edgeCircleColor = randomColor(fillColor);
-  drawEdgeCircle(centerX, centerY, mainCircleRadius, circleRadius, circleAngle,edgeCircleColor);
 
+  drawEdgeCircle(centerX, centerY, mainCircleRadius, circleRadius, circleAngle, edgeCircleColor);
+
+  // Draw line connecting circles
+  hasLine = rollDice(0.5);
+  if (hasLine) {
+    drawLine(centerX, centerY, mainCircleRadius, circleRadius, circleAngle);
+  }
   // Rolldice to see if we draw another orbiting circle
   circleRadius2 = random(.2, .5) * mainCircleRadius;
-  circleAngle2 =  circleAngle + 180 + random(-45, 45);
+  circleAngle2 = circleAngle + 180 + random(-45, 45);
   hasSecondCircle = rollDice(0.5);
   if (hasSecondCircle) {
     // Draw another circle on the outside of the main circle
     circleRadius2 = random(.2, .5) * mainCircleRadius;
-    circleAngle2 =  circleAngle + 180 + random(-70, 70);
+    circleAngle2 = circleAngle + 180 + random(-70, 70);
     edgeCircleColor2 = randomColor(fillColor);
     drawEdgeCircle(centerX, centerY, mainCircleRadius, circleRadius2, circleAngle2, edgeCircleColor2);
   }
@@ -86,7 +95,7 @@ function whiteCircle(centerX, centerY, angle, distance, mainCircleRadius) {
   circle(cutCircleCenter.x, cutCircleCenter.y, random(.2, .5) * mainCircleRadius);
 }
 
-function randomColor(colorToAvoid){
+function randomColor(colorToAvoid) {
   // Colors https://www.canva.com/colors/color-palettes/mermaid-lagoon/
   let colors = ["#145DA0", "#0C2D48", "#2E8BC0", "#B1D4E0"];
   // Remove colorToAvoid from colors
@@ -99,6 +108,7 @@ function randomColor(colorToAvoid){
 
 // Draw circle on the edge of the main circle
 function drawEdgeCircle(centerX, centerY, mainCircleRadius, circradius, circangle, fillColor) {
+  strokeWeight(0)
   fill(fillColor);
   let circvec = getcircle(centerX, centerY, circangle, mainCircleRadius / 2);
   // circvec.add(centerX,centerY);
@@ -143,7 +153,21 @@ function drawDots(centerX, centerY, circleCenter, circleRadius, mainCircleRadius
     circle(vec3.x, vec3.y, smallDotRadius);
   }
 }
-
+// Given the center of the circle, the angle and the distance from the center of a second circle,
+function drawLine(centerX, centerY, mainCircleRadius, circradius, circangle) {
+  let circvec = getcircle(centerX, centerY, circangle, (mainCircleRadius / 2) - (circradius / 2))
+  let circvec2 = circvec.copy()
+  circvec2.sub(centerX, centerY);
+  circvec2.rotate(180)
+  circvec2.normalize()
+  circvec2.mult(mainCircleRadius / 2)
+  circvec2.add(centerX, centerY);
+  // circvec.add(centerX,centerY);
+  stroke(255);
+  strokeWeight(10)
+  line(circvec.x, circvec.y, centerX, centerY);
+  line(circvec2.x, circvec2.y, centerX, centerY);
+}
 
 // Get point on circle
 function getcircle(xval, yval, circangle, circradius) {
