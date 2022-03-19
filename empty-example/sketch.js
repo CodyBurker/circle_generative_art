@@ -118,6 +118,11 @@ function drawEdgeCircle(centerX, centerY, mainCircleRadius, circradius, circangl
   // Draw dots on the outside of the circle
   drawDots(centerX, centerY, circvec, circradius, mainCircleRadius);
 
+  // One percent chance to recurse and draw another circle
+  hasRecursion = rollDice(0.5) & (circradius >150);
+  if (hasRecursion) {
+    drawCircle(circvec.x, circvec.y, circradius);
+  }
 
 }
 
