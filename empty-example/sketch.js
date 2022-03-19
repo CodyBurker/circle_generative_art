@@ -5,28 +5,33 @@
 // Random circles cutting out edge 
 // Little dots 
 // Random colors 
+// Try recursion
 
 // Not done
 // Lines connecting circles
-// System to overlapping cirlces
-// Try recursion
+// System for overlapping cirlces
+
 
 function setup() {
   createCanvas(3300, 2550);
+  // createCanvas()
   angleMode(DEGREES);
   noLoop();
 }
 
+const BACKGROUND = 240;
+
 function draw() {
-  background(255);
-  // drawCircle(100, 100, 100);
-  // drawCircle(300, 100, 100);
-  // drawCircle(100, 300, 100);
-  // drawCircle(300, 300, 100);
-  // Get 4 evenly spaced points around a centered circle
+  background(BACKGROUND);
+
   let centerX = width / 2;
   let centerY = height / 2;
   let mainCircleRadius = 800;
+
+  // Add a bigger circle in the center
+  drawCircle(centerX, centerY, mainCircleRadius);
+
+  // Add smaller circles around the big one
   let n_circles = 8;
   for (let i = 0; i < n_circles; i++) {
     let angle = i * (360 / n_circles);
@@ -34,6 +39,22 @@ function draw() {
     let y = centerY + mainCircleRadius * sin(angle);
     drawCircle(x, y, 400);
   }
+
+  // Add a few circles on the outside
+  n_circles = 16;
+  mainCircleRadius = mainCircleRadius + 600
+  outerCirclesToDraw = [0,1,2,6,7,8,9,10,14,15]
+  for (let i = 0; i < n_circles; i++) {
+    let angle = i * (360 / n_circles);
+    let x = centerX + mainCircleRadius * cos(angle);
+    let y = centerY + mainCircleRadius * sin(angle);
+    // If we are drawing an outer circle, draw it
+    if (outerCirclesToDraw.includes(i)) {
+    drawCircle(x, y, 400);
+    }
+  }
+
+
 
 }
 
@@ -88,7 +109,7 @@ function drawCircle(centerX, centerY, mainCircleRadius) {
 }
 
 function whiteCircle(centerX, centerY, angle, distance, mainCircleRadius) {
-  fill(255);
+  fill(BACKGROUND);
   stroke(255);
   strokeWeight(0);
   let cutCircleCenter = getcircle(centerX, centerY, angle, distance);
@@ -119,7 +140,7 @@ function drawEdgeCircle(centerX, centerY, mainCircleRadius, circradius, circangl
   drawDots(centerX, centerY, circvec, circradius, mainCircleRadius);
 
   // One percent chance to recurse and draw another circle
-  hasRecursion = rollDice(0.5) & (circradius >150);
+  hasRecursion = rollDice(0.5) & (circradius > 150);
   if (hasRecursion) {
     drawCircle(circvec.x, circvec.y, circradius);
   }
@@ -162,12 +183,13 @@ function drawDots(centerX, centerY, circleCenter, circleRadius, mainCircleRadius
 function drawLine(centerX, centerY, mainCircleRadius, circradius, circangle) {
   let circvec = getcircle(centerX, centerY, circangle, (mainCircleRadius / 2) - (circradius / 2))
   let circvec2 = circvec.copy()
+
   circvec2.sub(centerX, centerY);
   circvec2.rotate(180)
   circvec2.normalize()
   circvec2.mult(mainCircleRadius / 2)
   circvec2.add(centerX, centerY);
-  // circvec.add(centerX,centerY);
+
   stroke(255);
   strokeWeight(10)
   line(circvec.x, circvec.y, centerX, centerY);
