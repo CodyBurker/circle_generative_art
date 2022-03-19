@@ -1,8 +1,14 @@
 // Todo
-// Random circles on edge DONE
+
+// DONE
+// Random circles on edge 
 // Random circles cutting out edge 
-// Little dots DONE
+// Little dots 
+// Random colors 
+
+// Not done
 // Lines connecting circles
+// System to overlapping cirlces
 
 function setup() {
   createCanvas(3300, 2550);
@@ -43,6 +49,14 @@ function drawCircle(centerX, centerY, mainCircleRadius) {
   // Draw main circle at center
   circle(centerX, centerY, mainCircleRadius);
 
+  // Roll dice to cut out circle
+    cutCircleAngle = random(0, 360);
+    cutCircleRadius = random(mainCircleRadius / 2 * .2,.8* mainCircleRadius / 2);
+    cutCircleDistance = random(mainCircleRadius - cutCircleRadius, (mainCircleRadius) * .5);
+  if (rollDice(0.5)) {
+    whiteCircle(centerX, centerY, cutCircleAngle, cutCircleDistance, mainCircleRadius);
+  }
+
   // Draw a random circle on the outside of the main circle
   circleRadius = random(.2, .5) * mainCircleRadius;
   circleAngle = random(0, 360);
@@ -62,16 +76,14 @@ function drawCircle(centerX, centerY, mainCircleRadius) {
     drawEdgeCircle(centerX, centerY, mainCircleRadius, circleRadius2, circleAngle2, edgeCircleColor2);
   }
 
-  // Remove slice by adding white circle on top of everything
-  cutCircleAngle = random(0, 360);
+}
+
+function whiteCircle(centerX, centerY, angle, distance, mainCircleRadius) {
   fill(255);
   stroke(255);
-  // let circVec = getcircle(centerX, centerY, cutCircleAngle, mainCircleRadius/2);
-  // circle(cutCircleX, cutCircleY, 10);
-  // Draw a line from the edge of the small circle to the edge of the main circle
-  // Get center of small circle 1
-
-
+  strokeWeight(0);
+  let cutCircleCenter = getcircle(centerX, centerY, angle, distance);
+  circle(cutCircleCenter.x, cutCircleCenter.y, random(.2, .5) * mainCircleRadius);
 }
 
 function randomColor(colorToAvoid){
