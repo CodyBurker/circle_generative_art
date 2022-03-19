@@ -67,7 +67,7 @@ function drawCircle(centerX, centerY, mainCircleRadius) {
   fill(255);
   stroke(255);
   // let circVec = getcircle(centerX, centerY, cutCircleAngle, mainCircleRadius/2);
-  circle(cutCircleX, cutCircleY, 10);
+  // circle(cutCircleX, cutCircleY, 10);
   // Draw a line from the edge of the small circle to the edge of the main circle
   // Get center of small circle 1
 
